@@ -107,10 +107,22 @@ async function handleToggle(e, machineId) {
 
 async function loadMachines() {
   const { data, error } = await supabase.from("machines").select("*");
+
   if (error) {
+    console.error("Supabase error loading machines:", error);
     dashboardError.textContent = "Could not load machines: " + error.message;
+    machineGrid.innerHTML = "";
     return;
   }
+
+  if (!data || data.length === 0) {
+    dashboardError.textContent =
+      "No machines found. Check: (1) public/js/supabaseClient.js has your real Supabase URL + anon key, not the placeholder, and (2) run 'select * from public.machines;' in Supabase to confirm rows exist.";
+    machineGrid.innerHTML = "";
+    return;
+  }
+
+  dashboardError.textContent = "";
   renderMachines(data);
 }
 
