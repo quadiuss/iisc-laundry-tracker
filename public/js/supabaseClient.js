@@ -12,4 +12,7 @@
 const SUPABASE_URL = "https://ufzznlqlujpweovlnibx.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmenpubHFsdWpwd2VvdmxuaWJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1OTYzODQsImV4cCI6MjEwMTE3MjM4NH0.GMSVd_k0zjdbvSH-tTNP0EkTjXSGEPzMKj1M-ya5K6c";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// IMPORTANT: named supabaseClient (not "supabase") because the CDN
+// library itself already defines a global called "supabase" — reusing
+// that name causes a SyntaxError that silently breaks the whole page.
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

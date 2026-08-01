@@ -1,3 +1,4 @@
+
 // public/js/app.js
 // Handles: checking if this device already has a saved identity,
 // rendering the machine dashboard, subscribing to live updates,
@@ -106,7 +107,7 @@ async function handleToggle(e, machineId) {
 }
 
 async function loadMachines() {
-  const { data, error } = await supabase.from("machines").select("*");
+  const { data, error } = await supabaseClient.from("machines").select("*");
 
   if (error) {
     console.error("Supabase error loading machines:", error);
@@ -127,7 +128,7 @@ async function loadMachines() {
 }
 
 function subscribeToRealtimeUpdates() {
-  supabase
+  supabaseClient
     .channel("machines-changes")
     .on(
       "postgres_changes",
