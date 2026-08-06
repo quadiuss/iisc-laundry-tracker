@@ -49,6 +49,31 @@ exports.handler = async (event) => {
 
     const newStatus = machine.status === 'available' ? 'in_use' : 'available';
 
+    // One machine per person at a time — only enforced when someone is
+    // *claiming* a machine (available -> in_use). Freeing a machine
+    // (in_use -> available) is always allowed.
+    if (newStatus === 'in_use') {
+      const { data: existing, error: existingError } = await supabaseAdmin
+        .from('machines')
+        .select('id, name')
+        .eq('status', 'in_use')
+        .eq('last_used_phone', phone)
+        .neq('id', machineId);
+
+      if (existingError) {
+        return { statusCode: 500, body: JSON.stringify({ error: existingError.message }) };
+      }
+
+      if (existing && existing.length > 0) {
+        return {
+          statusCode: 409,
+          body: JSON.stringify({
+            error: `You already have ${existing[0].name} marked as in use. Free it up before starting another machine.`,
+          }),
+        };
+      }
+    }
+
     const { data: updated, error: updateError } = await supabaseAdmin
       .from('machines')
       .update({
